@@ -104,31 +104,15 @@ Où le discriminant est $\\Delta = b^2 - 4ac$.
         };
       });
 
-      // Appel avec le modèle gemma-4-31b-it avec fallback automatique
-      let response;
-      const modelsToTry = ["gemma-4-31b-it", "gemini-3.6-flash", "gemini-2.5-flash"];
-      let lastError: any = null;
-
-      for (const modelName of modelsToTry) {
-        try {
-          response = await ai.models.generateContent({
-            model: modelName,
-            contents,
-            config: {
-              systemInstruction,
-              temperature: 0.7,
-            }
-          });
-          if (response) break;
-        } catch (err: any) {
-          console.warn(`[Gemma Tutor] Échec avec le modèle ${modelName}:`, err?.message || err);
-          lastError = err;
+      // Appel direct avec le modèle gemma-4-31b-it
+      const response = await ai.models.generateContent({
+        model: "gemma-4-31b-it",
+        contents,
+        config: {
+          systemInstruction,
+          temperature: 0.7,
         }
-      }
-
-      if (!response) {
-        throw lastError || new Error("Aucun modèle n'a répondu.");
-      }
+      });
 
       const reply = response.text || "Je n'ai pas pu générer d'explication pour le moment. Veuillez réessayer.";
       res.json({ reply });
